@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const fragment_shader = `
 // http://www.fractalforums.com/new-theories-and-research/very-simple-formula-for-fractal-patterns/
@@ -51,7 +51,7 @@ void main() {
 
 export default class GLFrag extends React.Component {
   constructor(props) {
-     super(props);
+     super(props)
      this.state = {
        time: 0,
        width: 100,
@@ -64,11 +64,10 @@ export default class GLFrag extends React.Component {
     gl.shaderSource(shader, shaderSource)
     gl.compileShader(shader)
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      // Something went wrong during compilation; get the error
-      throw "could not compile shader:" + gl.getShaderInfoLog(shader)
+      console.log("could not compile shader:" + gl.getShaderInfoLog(shader))
     }
 
-    return shader;
+    return shader
   }
 
   createProgram(gl, vertexShader, fragmentShader) {
@@ -77,7 +76,6 @@ export default class GLFrag extends React.Component {
     gl.attachShader(program, fragmentShader)
     gl.linkProgram(program)
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        // something went wrong with the link
         console.log("program filed to link:" + gl.getProgramInfoLog (program))
     }
     return program
@@ -124,7 +122,7 @@ export default class GLFrag extends React.Component {
     // test if Gl fails
     if (!this.gl) {
       alert("Unable to initialize WebGL. Your browser may not support it.")
-      this.gl = null;
+      this.gl = null
       return
     }
 
@@ -135,19 +133,18 @@ export default class GLFrag extends React.Component {
 
     this.setup2D(this.gl,this.program)
 
-    //console.log(this.state.width)
     this.iGlobalTime = this.gl.getUniformLocation(this.program, "iGlobalTime")
-    this.gl.uniform1f(this.iGlobalTime, this.state.time);
-    this.gl.uniform3f(this.gl.getUniformLocation(this.program, "iResolution"), this.state.width, this.state.height, 0);
+    this.gl.uniform1f(this.iGlobalTime, this.state.time)
+    this.gl.uniform3f(this.gl.getUniformLocation(this.program, "iResolution"), this.state.width, this.state.height, 0)
 
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
-    // used for animation loop.  Add a property in here so can run as animation
+    // used for animation loop.  TODO Add a property in here so can run as animation
     const loop = time => {
        requestAnimationFrame(loop)
        this.setState({ time: time / 1200 })
     }
-    requestAnimationFrame(loop);
+    requestAnimationFrame(loop)
   }
 
   componentWillMount() {
@@ -158,7 +155,7 @@ export default class GLFrag extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time);
+    this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
     return false // Early experimental version might want to add rasterization in later
