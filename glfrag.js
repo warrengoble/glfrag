@@ -13,7 +13,7 @@ float field(in vec3 p) {
 	float accum = 0.;
 	float prev = 0.;
 	float tw = 0.;
-	for (int i = 0; i < 32; ++i) {
+	for (int i = 0; i < 20; ++i) {
 		float mag = dot(p, p);
 		p = abs(p) / mag + vec3(-.5, -.4, -1.5);
 		float w = exp(-float(i) / 7.);
@@ -54,9 +54,11 @@ export default class GLFrag extends React.Component {
      super(props)
      this.state = {
        time: 0,
-       width: 100,
-       height: 100
+       width: props.width,
+       height: props.height
      }
+
+		 this.handleResize = this.handleResize.bind(this)
   }
 
   compileShader(gl, shaderSource, shaderType) {
@@ -108,9 +110,6 @@ export default class GLFrag extends React.Component {
   }
 
   componentDidMount() {
-    this.state.width = this.refs.canvas.width
-    this.state.height = this.refs.canvas.height
-
     // set up GL stuff here
     this.gl = null
     try {
@@ -134,18 +133,32 @@ export default class GLFrag extends React.Component {
     this.setup2D(this.gl,this.program)
 
     this.iGlobalTime = this.gl.getUniformLocation(this.program, "iGlobalTime")
-    this.gl.uniform1f(this.iGlobalTime, this.state.time)
-    this.gl.uniform3f(this.gl.getUniformLocation(this.program, "iResolution"), this.state.width, this.state.height, 0)
+		this.iResolution = this.gl.getUniformLocation(this.program, "iResolution")
 
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
+		// Draw first frame TODO add animation stuff in later
+		this.gl.viewport(0, 0, this.state.width, this.state.height)
+		this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
+		this.gl.uniform3f(this.iResolution, this.state.width, this.state.height, 0)
+		this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
-    // used for animation loop.  TODO Add a property in here so can run as animation
     const loop = time => {
        requestAnimationFrame(loop)
-       this.setState({ time: time / 1200 })
+			 this.setState({ time: time / 1200})
     }
     requestAnimationFrame(loop)
+
+		window.addEventListener('resize', this.handleResize)
   }
+
+	handleResize() {
+		var width = window.innerWidth
+		var height = window.innerHeight
+
+		this.setState({width: width,height:height})
+
+		this.gl.viewport(0, 0, width, height)
+		this.gl.uniform3f(this.iResolution, width, height, 0)
+	}
 
   componentWillMount() {
     // TODO check if prop is fullscreen
@@ -156,14 +169,14 @@ export default class GLFrag extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
+		this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
-    return false // Early experimental version might want to add rasterization in later
+		return true
   }
 
   render() {
     return (
-      <canvas ref='canvas' width={window.innerWidth} height={window.innerHeight}></canvas>
+      <canvas ref='canvas' width={this.state.width} height={this.state.height}></canvas>
     )
   }
 }
