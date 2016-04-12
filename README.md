@@ -1,12 +1,12 @@
-# glfrag
+# glFrag
 
 A React component which is a 2D WebGL canvas fragment shader.
 
-#Run Server
-node server.js
+# Running
+Just load build/index.html
 
-#View
-http://localhost:3000
+# Development
+Built using Webpack.  Just run webpack --watch.
 
 #Implement
 ```
@@ -14,5 +14,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import GLFrag from './glfrag'
 
-ReactDOM.render(<GLFrag/>,document.getElementById('app'))
+document.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(
+    <GLFrag width={window.innerWidth} height={window.innerHeight}/>, document.getElementById('app'))
+})
 ```
