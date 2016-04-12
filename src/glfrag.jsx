@@ -51,14 +51,14 @@ void main() {
 
 export default class GLFrag extends React.Component {
   constructor(props) {
-     super(props)
-     this.state = {
-       time: 0,
-       width: props.width,
-       height: props.height
-     }
+    super(props)
+    this.state = {
+      time: 0,
+      width: props.width,
+      height: props.height
+    }
 
-		 this.handleResize = this.handleResize.bind(this)
+    this.handleResize = this.handleResize.bind(this)
   }
 
   compileShader(gl, shaderSource, shaderType) {
@@ -78,28 +78,32 @@ export default class GLFrag extends React.Component {
     gl.attachShader(program, fragmentShader)
     gl.linkProgram(program)
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.log("program filed to link:" + gl.getProgramInfoLog (program))
+      console.log("program filed to link:" + gl.getProgramInfoLog(program))
     }
     return program
   }
 
-  setup2D(gl,program) {
+  setup2D(gl, program) {
     var positionLocation = gl.getAttribLocation(program, "a_position")
     var uvLocation = gl.getAttribLocation(program, "a_uv")
 
     var buffer = gl.createBuffer()
 
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array([
-            -1.0, -1.0,
-             1.0, -1.0,
-            -1.0,  1.0,
-            -1.0,  1.0,
-             1.0, -1.0,
-             1.0,  1.0]),
-        gl.STATIC_DRAW)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0
+    ]), gl.STATIC_DRAW)
     gl.enableVertexAttribArray(positionLocation)
     gl.enableVertexAttribArray(uvLocation)
 
@@ -114,7 +118,7 @@ export default class GLFrag extends React.Component {
     this.gl = null
     try {
       this.gl = this.refs.canvas.getContext("webgl") || this.refs.canvas.getContext("experimental-webgl")
-    } catch(e) {
+    } catch (e) {
       console.log("Can't get WebGL context")
     }
 
@@ -125,40 +129,42 @@ export default class GLFrag extends React.Component {
       return
     }
 
-    this.vertexShader = this.compileShader(this.gl,vertex_shader,this.gl.VERTEX_SHADER)
-    this.fragmentShader = this.compileShader(this.gl,fragment_shader,this.gl.FRAGMENT_SHADER)
-    this.program = this.createProgram(this.gl, this.vertexShader,this.fragmentShader)
+    this.vertexShader = this.compileShader(this.gl, vertex_shader, this.gl.VERTEX_SHADER)
+    this.fragmentShader = this.compileShader(this.gl, fragment_shader, this.gl.FRAGMENT_SHADER)
+    this.program = this.createProgram(this.gl, this.vertexShader, this.fragmentShader)
     this.gl.useProgram(this.program)
 
-    this.setup2D(this.gl,this.program)
+    this.setup2D(this.gl, this.program)
 
     this.iGlobalTime = this.gl.getUniformLocation(this.program, "iGlobalTime")
-		this.iResolution = this.gl.getUniformLocation(this.program, "iResolution")
+    this.iResolution = this.gl.getUniformLocation(this.program, "iResolution")
 
-		// Draw first frame TODO add animation stuff in later
-		this.gl.viewport(0, 0, this.state.width, this.state.height)
-		this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
-		this.gl.uniform3f(this.iResolution, this.state.width, this.state.height, 0)
-		this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
+    // Draw first frame TODO add animation stuff in later
+    this.gl.viewport(0, 0, this.state.width, this.state.height)
+    this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
+    this.gl.uniform3f(this.iResolution, this.state.width, this.state.height, 0)
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
     const loop = time => {
-       requestAnimationFrame(loop)
-			 this.setState({ time: time / 1200})
+      requestAnimationFrame(loop)
+      this.setState({
+        time: time / 1200
+      })
     }
     requestAnimationFrame(loop)
 
-		window.addEventListener('resize', this.handleResize)
+    window.addEventListener('resize', this.handleResize)
   }
 
-	handleResize() {
-		var width = window.innerWidth
-		var height = window.innerHeight
+  handleResize() {
+    var width = window.innerWidth
+    var height = window.innerHeight
 
-		this.setState({width: width,height:height})
+    this.setState({width: width, height: height})
 
-		this.gl.viewport(0, 0, width, height)
-		this.gl.uniform3f(this.iResolution, width, height, 0)
-	}
+    this.gl.viewport(0, 0, width, height)
+    this.gl.uniform3f(this.iResolution, width, height, 0)
+  }
 
   componentWillMount() {
     // TODO check if prop is fullscreen
@@ -169,9 +175,9 @@ export default class GLFrag extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
-		this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
 
-		return true
+    return true
   }
 
   render() {
