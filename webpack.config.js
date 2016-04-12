@@ -1,5 +1,5 @@
 var path = require('path')
-var webpack = require('webpack')
+//var webpack = require('webpack')
 
 module.exports = {
   entry: './src/app.jsx',
@@ -11,17 +11,14 @@ module.exports = {
     filename: 'bundle.js'
   },
   devtool: 'sourcemap',
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      mangle: true
-    }),
+/*  plugins: [
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
     })
   ],
+*/
   module: {
     loaders: [{
       test: path.join(__dirname, 'src'),
