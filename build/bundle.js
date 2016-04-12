@@ -20056,11 +20056,11 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GLFrag).call(this, props));
 	
 	    _this.state = {
-	      time: 0,
 	      width: props.width,
 	      height: props.height
 	    };
 	
+	    _this.time = 0;
 	    _this.handleResize = _this.handleResize.bind(_this);
 	    return _this;
 	  }
@@ -20145,9 +20145,11 @@
 	
 	      var loop = function loop(time) {
 	        requestAnimationFrame(loop);
-	        _this2.setState({
-	          time: time / 1200
-	        });
+	
+	        _this2.time = time / 1000;
+	
+	        _this2.gl.uniform1f(_this2.gl.getUniformLocation(_this2.program, "iGlobalTime"), _this2.time);
+	        _this2.gl.drawArrays(_this2.gl.TRIANGLES, 0, 6);
 	      };
 	      requestAnimationFrame(loop);
 	
@@ -20171,14 +20173,6 @@
 	      document.body.style.margin = '0px';
 	      document.body.style.padding = '0px';
 	      document.body.style.overflow = 'hidden';
-	    }
-	  }, {
-	    key: "shouldComponentUpdate",
-	    value: function shouldComponentUpdate(nextProps, nextState) {
-	      this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time);
-	      this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-	
-	      return true;
 	    }
 	  }, {
 	    key: "render",

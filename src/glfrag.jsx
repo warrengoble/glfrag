@@ -53,11 +53,11 @@ export default class GLFrag extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      time: 0,
       width: props.width,
       height: props.height
     }
 
+    this.time = 0
     this.handleResize = this.handleResize.bind(this)
   }
 
@@ -147,9 +147,11 @@ export default class GLFrag extends React.Component {
 
     const loop = time => {
       requestAnimationFrame(loop)
-      this.setState({
-        time: time / 1200
-      })
+
+      this.time = time / 1000
+
+      this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.time)
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
     }
     requestAnimationFrame(loop)
 
@@ -171,13 +173,6 @@ export default class GLFrag extends React.Component {
     document.body.style.margin = '0px'
     document.body.style.padding = '0px'
     document.body.style.overflow = 'hidden'
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    this.gl.uniform1f(this.gl.getUniformLocation(this.program, "iGlobalTime"), this.state.time)
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
-
-    return true
   }
 
   render() {
